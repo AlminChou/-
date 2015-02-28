@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="c_spinner">#b0f1f1f1</color>
+    <color name="tab_view_bg">#F7F7F7</color>
+    <color name="all_bg">#EFEFF4</color>
+    <color name="white">#ffffff</color>
+    <color name="c_def_line_color">#bbbbbb</color>
+    <color name="delete_btn_color">#10AEFF</color>
+    <color name="other_btn_color">#FF0000</color>
+</resources>
