@@ -3,12 +3,13 @@ package com.example.almin.library.model;
 public class Process {
 	private String processId; //请求ID
 	private String assetid;   //资产ID
-	private String username;  //请求用户姓名
+	private String username;  //请求用户的名字
 	private String state;     //请求状态 （申请，维修，报废）
 	private String message;   //请求想问留言说明
 	private String isAccept;  //是否已经通过
 	private String repairState; //维修状态
 	private String date; //请求日期
+	private String useraccount; //请求用户的账号
 	
 	public String getAssetid() {
 		return assetid;
@@ -73,5 +74,12 @@ public class Process {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	
+
+	public String getUseraccount() {
+		return useraccount;
+	}
+
+	public void setUseraccount(String useraccount) {
+		this.useraccount = useraccount;
+	}
 }

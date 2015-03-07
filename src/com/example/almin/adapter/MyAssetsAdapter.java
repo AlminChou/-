@@ -29,6 +29,7 @@ import com.example.almin.MyApplication;
 import com.example.almin.R;
 import com.example.almin.dialog.MyAlertDialog;
 import com.example.almin.library.model.Asset;
+import com.example.almin.library.model.User;
 import com.example.almin.listener.SpinnerStateListener;
 import com.example.almin.webservice.ProcessRestClient;
 import com.example.almin.widget.PinnedHeaderExpandableListView;
@@ -111,13 +112,15 @@ public class MyAssetsAdapter extends BaseExpandableListAdapter implements Header
 					public void onClick(DialogInterface dialog, int which) {
 						if(MyApplication.getInstance().isNetworkAvailable()){
 							mSpinnerStateListener.toShowSpinner();
+							User user = MyApplication.getInstance().getUser();
 							RequestParams params = new RequestParams();
 							params.put("assetId", asset.getId());
-							params.put("username", asset.getName());
+							params.put("username", user.getName());
 							params.put("state", "归还");
 							params.put("message", "");
 							params.put("isAccept", "未通过");
 							params.put("processDate", MyApplication.getNowDateTime());
+							params.put("useraccount", user.getUsername());
 							ProcessRestClient.post(ProcessRestClient.ACTION_ADD_PROCESS, params , mProcessHandler);
 						}else{
 							Toast.makeText(mContext, "当前网络不可用！！", Toast.LENGTH_LONG).show();
@@ -286,14 +289,16 @@ public class MyAssetsAdapter extends BaseExpandableListAdapter implements Header
 			@Override
 			public void onClick(View v) {
 				if(MyApplication.getInstance().isNetworkAvailable()){
+					User user = MyApplication.getInstance().getUser();
 					mSpinnerStateListener.toShowSpinner();
 					RequestParams params = new RequestParams();
 					params.put("assetId", asset.getId());
-					params.put("username", asset.getName());
+					params.put("username", user.getName());
 					params.put("state", mOtherState);
 					params.put("message", etReason.getText().toString().trim());
 					params.put("isAccept", "未通过");
 					params.put("processDate", MyApplication.getNowDateTime());
+					params.put("useraccount", user.getUsername());
 					ProcessRestClient.post(ProcessRestClient.ACTION_ADD_PROCESS, params , mProcessHandler);
 				}else{
 					Toast.makeText(mContext, "当前网络不可用！！", Toast.LENGTH_LONG).show();

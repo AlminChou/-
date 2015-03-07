@@ -42,8 +42,6 @@ implements View.OnTouchListener, OnGestureListener {
 		TYPE_BACK_NONE, TYPE_BACK_DELETE, TYPE_BACK_EDIT, TYPE_BACK_EDIT_DELETE
 	}
 
-	
-	
 	public SwipeView(Context context) {
 		super(context);
 		init(context);
@@ -67,6 +65,26 @@ implements View.OnTouchListener, OnGestureListener {
 		this.mIsBackViewShow = isBackViewShow;
 	}
 
+	public void setLeftButtonVisible(boolean isVisible){
+		mBtnOthers.setVisibility(isVisible?View.VISIBLE:View.GONE);
+	}
+	
+	public void setLeftButtonText(String text){
+		mBtnOthers.setText(text);
+	}
+	
+	public void setRightButtonText(String text){
+		mBtnDelete.setText(text);
+	}
+	
+	public void setRightButtonBackground(int color){
+		mBtnDelete.setBackgroundColor(color);
+	}
+
+	public void setLeftButtonBackground(int color){
+		mBtnOthers.setBackgroundColor(color);
+	}
+	
 	private void init(Context context) {
 		mContext = context;
 		mDetector = new GestureDetector(mContext, this);

@@ -82,6 +82,7 @@ public class PersonalAssetsFragment extends AbstractFragment implements SpinnerS
 	}
 	
 	private void getMyAssetsInfo() {
+		showSpinner(mInflater, mRootView);
 		if(MyApplication.getInstance().isNetworkAvailable()){
 			RequestParams params = new RequestParams();
 			params.put("username", MyApplication.getInstance().getUser().getUsername());
@@ -121,6 +122,7 @@ public class PersonalAssetsFragment extends AbstractFragment implements SpinnerS
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
+		hideSpinner();
 		mIsTabViewVisible = true;
 		updateTabViewStatus();
 	}
@@ -144,6 +146,7 @@ public class PersonalAssetsFragment extends AbstractFragment implements SpinnerS
 			if(mMyAssetsHashMap!=null){
 				mMyAssetsAdapter=new MyAssetsAdapter(getActivity(),mListView,mMyAssetsHashMap,PersonalAssetsFragment.this,mCategory);
 				mListView.setAdapter(mMyAssetsAdapter);
+				hideSpinner();
 			}
 		}
 		

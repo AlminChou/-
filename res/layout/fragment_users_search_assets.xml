@@ -1,79 +1,96 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/all_bg" >
+    android:layout_height="match_parent" >
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="match_parent"
+        android:background="@color/all_bg" >
 
         <LinearLayout
-            android:id="@+id/ll_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/search_page_hint" />
-
-            <EditText
-                android:id="@+id/et_find_asset_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_search_info" />
-
-            <Spinner
-                android:id="@+id/sp_category"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/spinner_category" />
-
-            <ImageButton
-                android:id="@+id/btn_search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/search_btn"
-                android:text="@string/search" />
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/rl_comment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/activity_horizontal_margin"
-            android:visibility="gone" >
-
-            <TextView
-                android:id="@+id/tv_result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/no_result" />
-
             <LinearLayout
+                android:id="@+id/ll_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <EditText
-                    android:id="@+id/et_needs_comment"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/needs_comment_hint"
-                    android:lines="10"
-                    android:paddingTop="@dimen/activity_horizontal_margin" />
+                    android:text="@string/search_page_hint" />
+
+                <EditText
+                    android:id="@+id/et_find_asset_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_search_info" />
+
+                <Spinner
+                    android:id="@+id/sp_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/spinner_category" />
+
+                <ImageButton
+                    android:id="@+id/btn_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/search_btn"
+                    android:text="@string/search" />
             </LinearLayout>
-        </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_comment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/activity_horizontal_margin"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/tv_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_result" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <EditText
+                        android:id="@+id/et_needs_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/needs_comment_hint"
+                        android:lines="10"
+                        android:paddingTop="@dimen/activity_horizontal_margin" />
+                </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:background="@color/white"
+        android:id="@+id/rl_lv_result"
+        android:visibility="gone">
 
         <com.example.almin.widget.PinnedHeaderExpandableListView
             android:id="@+id/lv_search_result"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone" >
+            android:choiceMode="singleChoice"
+            android:groupIndicator="@null"
+            android:divider="@null"
+            android:listSelector="#000000"
+            >
         </com.example.almin.widget.PinnedHeaderExpandableListView>
-    </LinearLayout>
+    </RelativeLayout>
 
-</ScrollView>
+</RelativeLayout>

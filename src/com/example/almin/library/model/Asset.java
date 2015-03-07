@@ -16,7 +16,7 @@ public class Asset {
 	private String id;           //资产id
 	private String category;     //资产类别
 	private String state;        //占用状态（空闲，占用，报废，申请，维修？）
-	private String owner;        //占有者姓名
+	private String owner;        //占有者账号
 	private String purchase_date;//入库日期
 	private String description;  //资产具体描述
 
