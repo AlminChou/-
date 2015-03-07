@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="save">保存</string>
+    <string name="add">申请</string>
     <string name="return_asset">归还</string>
     <string name="bao_ro_sunhuai_asset">报废/保修</string>
     
@@ -43,6 +44,12 @@
     <string name="update_old_passowrd">请输入旧密码</string>
     <string name="update_new_passowrd">请输入新密码</string>
     
+    <string name="hint_search_info">请输入搜索资产名称，空则搜大类</string>
+    <string name="search">搜索</string>
+    <string name="no_result">没有找到对应结果!如有需要请留言给管理员.</string>
+    <string name="needs_comment_hint">请留下你的意见和需求，我们回尽快处理。</string>
+    <string name="search_page_hint">请选择条件：</string>
+    
     <string-array name="spinner_department">
     	<item>总经理办公室</item>    
     	<item>IT部</item>    
@@ -55,6 +62,15 @@
     <string-array name="spinner_sex">
     	<item>男</item>    
     	<item>女</item>    
+    </string-array>
+    
+    <string-array name="spinner_category">
+    	<item>电器</item>    
+    	<item>家具</item>    
+    	<item>杂物</item>    
+    	<item>车辆</item>    
+    	<item>房屋</item>    
+    	<item>文具</item>    
     </string-array>
 
 </resources>

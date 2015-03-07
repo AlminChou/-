@@ -75,7 +75,13 @@ public class Asset {
 		this.description = description;
 	}
 
-	public static HashMap<Integer, List<Asset>> decodeAssetsFromJson(String assets){
+	public static List<Asset> decodeAssetsFromJsonToList(String assets){
+		List<Asset> list;
+		list=new Gson().fromJson(assets,  new TypeToken<ArrayList<Asset>>(){}.getType());  
+		return list;
+	}
+	
+	public static HashMap<Integer, List<Asset>> decodeAssetsFromJsonToHashMap(String assets){   //是否需要日后换成 传 分类的数组来创建多少条list 和数组里获取分类的名字
 		List<Asset> allAssets = new Gson().fromJson(assets,  new TypeToken<ArrayList<Asset>>(){}.getType());  
 		HashMap<Integer, List<Asset>> hashMap = new HashMap<Integer, List<Asset>>();
 		List<Asset> list=new ArrayList<Asset>();
@@ -119,9 +125,21 @@ public class Asset {
 		return hashMap;
 	}
 
-	//	public static List<Asset> decodeAssetsFromJson(String assets){
-	//		List<Asset> list;
-	//		list=new Gson().fromJson(assets,  new TypeToken<ArrayList<Asset>>(){}.getType());  
-	//		return list;
-	//	}
+	public static HashMap<Integer, List<Asset>> decodeAssetsFromJsonToHashMap(String assets,String category){
+		List<Asset> allAssets = new Gson().fromJson(assets,  new TypeToken<ArrayList<Asset>>(){}.getType());  
+		HashMap<Integer, List<Asset>> hashMap = new HashMap<Integer, List<Asset>>();
+		List<Asset> list=new ArrayList<Asset>();
+
+		for(int i=0;i<allAssets.size();i++){
+			if(allAssets.get(i).getCategory().equalsIgnoreCase(category)){
+				list.add(allAssets.get(i));
+				System.out.println(category);
+			}
+		}
+
+		hashMap.put(0, list);
+		allAssets.clear();
+		allAssets=null;
+		return hashMap;
+	}
 }

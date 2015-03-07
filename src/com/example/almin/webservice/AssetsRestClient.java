@@ -8,6 +8,8 @@ import com.loopj.android.http.RequestParams;
 public class AssetsRestClient {
 	private static final String USERS_SERVICE_BASE_API = MyConfiguration.API_BASE+"Asset.";
 	public static final String ACTION_GET_USER_ASSETS = "getUserAssetsInfo.do";
+	public static final String ACTION_GET_ASSETS_WITH_STATE = "getAssetsInfoWithState.do";
+	public static final String ACTION_GET_ASSETS_WITH_STATE_AND_NAME = "getAssetsInfoWithStateAndName.do";
 
 	private static AsyncHttpClient client = new AsyncHttpClient();
 																

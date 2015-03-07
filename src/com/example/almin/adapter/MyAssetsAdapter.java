@@ -38,7 +38,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 public class MyAssetsAdapter extends BaseExpandableListAdapter implements HeaderAdapter{
-	private String[] mCategory = {"电器","家具","杂物","车辆","房屋","文具"};
+	private String[] mCategory ;
 	private HashMap<Integer, List<Asset>> mGroupDatas;
 	private Context mContext;  
 	private PinnedHeaderExpandableListView mListView;  
@@ -46,11 +46,12 @@ public class MyAssetsAdapter extends BaseExpandableListAdapter implements Header
 	private PopupWindow mPopupWindow;
 	private String mOtherState="维修";
 	private SpinnerStateListener mSpinnerStateListener;
-	public MyAssetsAdapter(Context context,PinnedHeaderExpandableListView listView,HashMap<Integer, List<Asset>> groupDatas,SpinnerStateListener spinnerStateListener){  
+	public MyAssetsAdapter(Context context,PinnedHeaderExpandableListView listView,HashMap<Integer, List<Asset>> groupDatas,SpinnerStateListener spinnerStateListener,String[] category){  
 		mGroupDatas = groupDatas;
 		mContext = context;  
 		mListView = listView;  
 		mSpinnerStateListener = spinnerStateListener;
+		mCategory = category;
 		mInflater = LayoutInflater.from(mContext);  
 	}  
 

@@ -8,11 +8,15 @@ import org.apache.http.Header;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.almin.MyApplication;
 import com.example.almin.R;
+import com.example.almin.activity.MainActivity;
 import com.example.almin.adapter.MyAssetsAdapter;
 import com.example.almin.fragment.AbstractFragment;
 import com.example.almin.library.model.Asset;
@@ -29,6 +33,7 @@ public class PersonalAssetsFragment extends AbstractFragment implements SpinnerS
 	private MyAssetsAdapter mMyAssetsAdapter;
 	private HashMap<Integer, List<Asset>> mMyAssetsHashMap;
 	private boolean mIsTabViewVisible=true;
+	private String[] mCategory;
 	
 	public PersonalAssetsFragment getPersonalAssetsFragment(){
 		return new PersonalAssetsFragment();
@@ -50,7 +55,7 @@ public class PersonalAssetsFragment extends AbstractFragment implements SpinnerS
 	
 	@Override
 	protected boolean isBackButtonVisible() {
-		return true;
+		return !mIsTabViewVisible;
 	}
 	
 	@Override
@@ -66,6 +71,7 @@ public class PersonalAssetsFragment extends AbstractFragment implements SpinnerS
 		mListView = (PinnedHeaderExpandableListView) mRootView.findViewById(R.id.plv_my_assets);
 		mListView.setHeaderView(layoutInflater.inflate(R.layout.my_assets_floatview,  
 				mListView, false));  
+		mCategory = getResources().getStringArray(R.array.spinner_category);
 		getMyAssetsInfo();
 		return mRootView;
 	}
@@ -79,26 +85,32 @@ public class PersonalAssetsFragment extends AbstractFragment implements SpinnerS
 		if(MyApplication.getInstance().isNetworkAvailable()){
 			RequestParams params = new RequestParams();
 			params.put("username", MyApplication.getInstance().getUser().getUsername());
-			AssetsRestClient.get(AssetsRestClient.ACTION_GET_USER_ASSETS, params, new AsyncHttpResponseHandler() {
-				
-				@Override
-				public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-					System.out.println(new String(arg2));
-					mMyAssetsHashMap= Asset.decodeAssetsFromJson(new String(arg2));
-					if(mMyAssetsHashMap!=null){
-						mMyAssetsAdapter=new MyAssetsAdapter(getActivity(),mListView,mMyAssetsHashMap,PersonalAssetsFragment.this);
-						mListView.setAdapter(mMyAssetsAdapter);
-					}
-				}
-				
-				@Override
-				public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3) {
-					showToast("请求失败！");
-				}
-			});
+			AssetsRestClient.get(AssetsRestClient.ACTION_GET_USER_ASSETS, params, mHandler);
 		}else{
 			showToast("当前网络不可用！");
 		}
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.my_assets, menu);
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case R.id.action_add:
+			showToast("点击了申请资源");
+			MainActivity.navigateToUserSearchAssetsFrsagment();
+			break;
+		case android.R.id.home:
+			onBackPressed();
+			break;
+
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -122,4 +134,22 @@ public class PersonalAssetsFragment extends AbstractFragment implements SpinnerS
 	public void toHideSpinner() {
 		hideSpinner();
 	}
+	
+	private AsyncHttpResponseHandler mHandler = new AsyncHttpResponseHandler() {
+		
+		@Override
+		public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
+			System.out.println(new String(arg2));
+			mMyAssetsHashMap= Asset.decodeAssetsFromJsonToHashMap(new String(arg2));
+			if(mMyAssetsHashMap!=null){
+				mMyAssetsAdapter=new MyAssetsAdapter(getActivity(),mListView,mMyAssetsHashMap,PersonalAssetsFragment.this,mCategory);
+				mListView.setAdapter(mMyAssetsAdapter);
+			}
+		}
+		
+		@Override
+		public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3) {
+			showToast("请求失败！");
+		}
+	};
 }

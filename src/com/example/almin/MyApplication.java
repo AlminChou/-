@@ -141,6 +141,10 @@ public class MyApplication extends Application {
 		return "done".equalsIgnoreCase(text);
 	}
 	
+	public static boolean isTextNoResultForJson(String text) {
+		return "[]".equalsIgnoreCase(text);
+	}
+	
 	public int getDisplayWidth() {
 		return mDisplayWidth;
 	}

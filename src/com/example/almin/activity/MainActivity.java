@@ -23,6 +23,7 @@ import com.example.almin.MyFragmentManager;
 import com.example.almin.R;
 import com.example.almin.fragment.AbstractFragment;
 import com.example.almin.fragment.UpdateMyInfoFragment;
+import com.example.almin.fragment.UserSearchAssetsFragment;
 import com.example.almin.fragment.main.MyRequestFragment;
 import com.example.almin.fragment.main.PersonalAssetsFragment;
 import com.example.almin.fragment.main.PersonalSettingFragment;
@@ -138,6 +139,11 @@ public class MainActivity extends FragmentActivity{
 		fragment.setTabViewVisible(false);
 		MyFragmentManager.getInstance().addFragmentAndAdd2BackStack(
 				fragment);
+	}
+	
+	public static void navigateToUserSearchAssetsFrsagment() {
+		MyFragmentManager.getInstance().addFragmentAndAdd2BackStack(
+				new UserSearchAssetsFragment());
 	}
 	
 	public void showTabViewByFlag(boolean flag) {

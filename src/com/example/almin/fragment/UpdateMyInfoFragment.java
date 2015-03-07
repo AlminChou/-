@@ -184,14 +184,14 @@ public class UpdateMyInfoFragment extends AbstractFragment implements UpdateInfo
 		updateTabViewStatus();
 	}
 
-	public abstract static class UpdateMode{
+	private abstract static class UpdateMode{
 		protected abstract void clickSave();
 		protected abstract boolean isShowInfoLayout();
 		protected abstract boolean isShowPasswordLayout();
 		protected UpdateInfoSaveListener mUpdateInfoSaveListener;
-		public static class UpdateInfoMode extends UpdateMode{
+		private static class UpdateInfoMode extends UpdateMode{
 
-			public UpdateInfoMode(UpdateInfoSaveListener updateInfoSaveListener) {
+			private UpdateInfoMode(UpdateInfoSaveListener updateInfoSaveListener) {
 				mUpdateInfoSaveListener = updateInfoSaveListener;
 			}
 
@@ -211,7 +211,7 @@ public class UpdateMyInfoFragment extends AbstractFragment implements UpdateInfo
 			}
 		}
 
-		public static class UpdatePasswordMode extends UpdateMode{
+		private static class UpdatePasswordMode extends UpdateMode{
 
 			public UpdatePasswordMode(UpdateInfoSaveListener updateInfoSaveListener) {
 				mUpdateInfoSaveListener = updateInfoSaveListener;
