@@ -2,6 +2,7 @@ package com.example.almin.library.model;
 
 public class NeedsComment {
 	private String id;           //留言id
+	private String useraccount;  //用户账号
 	private String username;     //用户姓名
 	private String lack_asset;   //需求资源名字
 	private String date;         //留言日期
@@ -19,6 +20,14 @@ public class NeedsComment {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getUseraccount() {
+		return useraccount;
+	}
+
+	public void setUseraccount(String useraccount) {
+		this.useraccount = useraccount;
 	}
 
 	public void setUsername(String username) {

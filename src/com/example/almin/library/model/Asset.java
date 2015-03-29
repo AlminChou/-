@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import android.R.integer;
+import android.annotation.SuppressLint;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 
 
+@SuppressLint("UseSparseArrays")
 public class Asset {
 	private String name;         //资产物品名字
 	private String id;           //资产id
@@ -81,6 +82,7 @@ public class Asset {
 		return list;
 	}
 	
+	@SuppressLint("UseSparseArrays")
 	public static HashMap<Integer, List<Asset>> decodeAssetsFromJsonToHashMap(String assets){   //是否需要日后换成 传 分类的数组来创建多少条list 和数组里获取分类的名字
 		List<Asset> allAssets = new Gson().fromJson(assets,  new TypeToken<ArrayList<Asset>>(){}.getType());  
 		HashMap<Integer, List<Asset>> hashMap = new HashMap<Integer, List<Asset>>();

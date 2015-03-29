@@ -58,10 +58,15 @@
                     android:text="@string/no_result" />
 
                 <LinearLayout
+                    android:layout_marginTop="20dip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" >
-
+					<EditText
+					    android:id="@+id/et_needs_comment_asset"
+					    android:hint="@string/needs_asset_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
                     <EditText
                         android:id="@+id/et_needs_comment"
                         android:layout_width="match_parent"
@@ -69,6 +74,12 @@
                         android:hint="@string/needs_comment_hint"
                         android:lines="10"
                         android:paddingTop="@dimen/activity_horizontal_margin" />
+                    <ImageButton
+	                    android:id="@+id/btn_comment"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:background="@drawable/search_btn"
+	                    android:text="@string/comment" />
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>

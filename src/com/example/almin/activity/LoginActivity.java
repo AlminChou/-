@@ -4,12 +4,12 @@ import java.io.File;
 
 import org.apache.http.Header;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -30,7 +30,7 @@ public class LoginActivity extends Activity {
 		getWindow().setFormat(PixelFormat.TRANSLUCENT);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
-//		initAppTempDir();
+		initAppTempDir();
 		btnLogin = (Button) findViewById(R.id.btn_login);
 		btnLogin.setOnClickListener(new OnClickListener() {
 			
@@ -64,35 +64,35 @@ public class LoginActivity extends Activity {
 		
 	}
 
-//	private void initAppTempDir() {
-//		String sDir1;
-//		int i=0;//是否检查到存在SD卡
-//		//判断SD卡是否插入
-//		String status = Environment.getExternalStorageState();
-//		if (status.equals(Environment.MEDIA_MOUNTED)) {
-//			i=1;
-//		} else {
-//			i=0;
-//		}
-//		//然后根据是否插入状态指定目录
-//		if (i==1) {
-//			File parent = new File("/sdcard/AssetsService/"); //创建总文件夹
-//			if (!parent.exists()) {
-//				parent.mkdirs();
-//			}
-//			sDir1 = "/sdcard/AssetsService/AvatarTemp/";
-//		} else {
-//			File parent = new File("/AssetsService/"); //创建总文件夹
-//			if (!parent.exists()) {
-//				parent.mkdirs();
-//			}
-//			sDir1 = "/AssetsService/AvatarTemp/";
-//		}
-//		//然后是创建文件夹
-//
-//		File parent1 = new File(sDir1); 
-//		if (!parent1.exists()) {
-//			parent1.mkdirs();
-//		}
-//	}
+	@SuppressLint("SdCardPath")
+	private void initAppTempDir() {
+		String sDir;
+		//判断SD卡是否插入
+		String status = Environment.getExternalStorageState();
+		boolean isHaveSDcard=status.equals(Environment.MEDIA_MOUNTED);
+		if (isHaveSDcard) {
+			//然后根据是否插入状态指定目录
+			File parent = new File("/sdcard/AssetsService/"); //创建总文件夹
+			if (!parent.exists()) {
+				parent.mkdirs();
+				System.out.println("parent 文件夹创建完成"+isHaveSDcard);
+			}
+			sDir = "/sdcard/AssetsService/AvatarTemp/";
+		} else {
+			//然后根据是否插入状态指定目录
+			File parent = new File("/AssetsService/"); //创建总文件夹
+			if (!parent.exists()) {
+				parent.mkdirs();
+				System.out.println("parent 文件夹创建完成"+isHaveSDcard);
+			}
+			sDir = "/AssetsService/AvatarTemp/";
+		}
+		//然后是创建Avatar文件夹
+
+		File avatarDir = new File(sDir); 
+		if (!avatarDir.exists()) {
+			avatarDir.mkdirs();
+			System.out.println("avatar 文件夹创建完成");
+		}
+	}
 }

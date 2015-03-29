@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,6 +35,7 @@ implements View.OnTouchListener, OnGestureListener {
 	private TextView mTvLeftText;
 	private OnClickListener mFrontViewClickListener;
 	private GestureDetector mDetector = null;;
+	@SuppressWarnings("unused")
 	private boolean mIsFrontLeftClickable=true;
 	public enum BackViewType {
 		TYPE_BACK_NONE, TYPE_BACK_DELETE, TYPE_BACK_EDIT, TYPE_BACK_EDIT_DELETE

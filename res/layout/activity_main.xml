@@ -16,7 +16,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/tab_view_bg">
-
+	
+        <View 
+            android:layout_width="match_parent"
+       	    android:layout_height="1dip"
+       	    android:background="@color/c_def_line_color"/>
+        
         <FrameLayout
             android:id="@android:id/tabcontent"
             android:layout_width="0dp"

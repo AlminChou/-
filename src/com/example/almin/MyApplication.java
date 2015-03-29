@@ -1,29 +1,43 @@
 package com.example.almin;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.example.almin.library.model.User;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.almin.library.model.User;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+
 public class MyApplication extends Application {
+	public static final String MAIN_DIR_PATH = "/AssetsService/";
+	public static final String AVATAR_DIR_PATH = "/AssetsService/AvatarTemp/";
+	public static final String AVATAR_PATH = "/AssetsService/AvatarTemp/myavatar.jpg";
 	private static MyApplication instance;
 	private User user;
 	private Bitmap mBmpAvatar;
@@ -45,6 +59,7 @@ public class MyApplication extends Application {
 			instance = this;
 		}
 		MyConfiguration.init();
+		initImageLoader(getApplicationContext());
 		loadUserInfo();
 		//image-loader初始化
 		// 其他初始化
@@ -55,6 +70,19 @@ public class MyApplication extends Application {
 		
 	}
 
+	@SuppressWarnings("deprecation")
+	private void initImageLoader(Context context) {
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+				context).threadPriority(Thread.NORM_PRIORITY - 1)
+				.denyCacheImageMultipleSizesInMemory()
+				.discCacheFileNameGenerator(new Md5FileNameGenerator())
+				.tasksProcessingOrder(QueueProcessingType.FIFO)
+				.writeDebugLogs()
+				.defaultDisplayImageOptions(DisplayImageOptions.createSimple())
+				.build();
+		ImageLoader.getInstance().init(config);
+	}
+	
 	public static MyApplication getInstance() {
 		return instance;
 	}
@@ -86,13 +114,17 @@ public class MyApplication extends Application {
 	public void onTerminate() {
 		super.onTerminate();
 		//清理缓存工作  关闭其他东西
+		cleanCache();
+	}
+
+	private void cleanCache() {
+		
 	}
 
 	public static boolean isValidEmail(String email) {
 		String strPattern = "^[a-zA-Z0-9+][+\\w\\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]$";
 		Pattern p = Pattern.compile(strPattern);
 		Matcher m = p.matcher(email);
-
 		return m.matches();
 	}
 	
@@ -112,6 +144,45 @@ public class MyApplication extends Application {
 					InputMethodManager.HIDE_NOT_ALWAYS);
 		} catch (Exception e) {
 		}
+	}
+	
+	public static String saveImage(String directory, String filename,
+			Bitmap source, byte[] jpegData, int quality,boolean isUpdate) {
+		OutputStream outputStream = null;
+		String filePath = directory + filename;
+		try {
+			File dir = new File(directory);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			File file = new File(directory, filename);
+			if(isUpdate){
+				file.delete();
+			}
+			if (file.createNewFile()) {
+				outputStream = new FileOutputStream(file);
+				if (source != null) {
+					source.compress(CompressFormat.JPEG, quality, outputStream);
+				} else {
+					outputStream.write(jpegData);
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (Throwable t) {
+				}
+			}
+		}
+		return filePath;
 	}
 	
 	public boolean isNetworkAvailable() {
@@ -167,5 +238,10 @@ public class MyApplication extends Application {
 	
 	public static String getNowDateTime(){
 		return sDateFormat.format(new Date());
+	}
+	
+	public static boolean isHaveSDcard() {
+		String status = Environment.getExternalStorageState();
+		return status.equals(Environment.MEDIA_MOUNTED);
 	}
 }

@@ -24,20 +24,23 @@ import com.example.almin.MyApplication;
 import com.example.almin.R;
 import com.example.almin.adapter.PersonalSearchAdapter;
 import com.example.almin.library.model.Asset;
+import com.example.almin.library.model.User;
+import com.example.almin.listener.UpdateSearchModeListener;
 import com.example.almin.utils.MyUtils;
 import com.example.almin.webservice.AssetsRestClient;
+import com.example.almin.webservice.CommentsRestClient;
 import com.example.almin.widget.PinnedHeaderExpandableListView;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-public class UserSearchAssetsFragment extends AbstractFragment{
+public class UserSearchAssetsFragment extends AbstractFragment implements UpdateSearchModeListener{
 	private ViewGroup mRootView;
 	private PinnedHeaderExpandableListView mListView;
 	private LinearLayout mLlSearch;
 	private RelativeLayout mRlComment,mRlResult;
-	private EditText mEtSearchInfo,mEtComment;
+	private EditText mEtSearchInfo,mEtNeedAsset,mEtComment;
 	private Spinner mSpCategory;
-	private ImageButton mBtnSearch; 
+	private ImageButton mBtnSearch,mBtnComment; 
 	private SearchMode mSearchMode;
 	private HashMap<Integer, List<Asset>> mListResult;
 	private PersonalSearchAdapter mAdapter;
@@ -90,12 +93,13 @@ public class UserSearchAssetsFragment extends AbstractFragment{
 		});
 		mEtSearchInfo = (EditText) mRootView.findViewById(R.id.et_find_asset_name);
 		mEtComment = (EditText) mRootView.findViewById(R.id.et_needs_comment);
+		mEtNeedAsset = (EditText) mRootView.findViewById(R.id.et_needs_comment_asset);
 		mSpCategory = (Spinner) mRootView.findViewById(R.id.sp_category);
 		mBtnSearch = (ImageButton) mRootView.findViewById(R.id.btn_search);
+		mBtnComment = (ImageButton) mRootView.findViewById(R.id.btn_comment);
 		mSearchMode = new SearchMode.SearchActionMode();
 		updateViewStatus();
 		mBtnSearch.setOnClickListener(new OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				MyUtils.setInputMethodHide(getActivity());
@@ -108,6 +112,29 @@ public class UserSearchAssetsFragment extends AbstractFragment{
 					AssetsRestClient.post(MyApplication.isTextEmptyOrNull(searchInfo)?
 							AssetsRestClient.ACTION_GET_ASSETS_WITH_STATE_IN_CATEGORY:
 								AssetsRestClient.ACTION_GET_ASSETS_WITH_STATE_AND_NAME_IN_CATEGORY, params, mResultHandler);
+				}else{
+					showToast("当前网络不可用！请检查！");
+				}
+			}
+		});
+		mBtnComment.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//发布留言
+				if(MyApplication.getInstance().isNetworkAvailable()){
+					if(!MyApplication.isTextEmptyOrNull(mEtNeedAsset.getText().toString())
+							&&!MyApplication.isTextEmptyOrNull(mEtComment.getText().toString())){
+						User user = MyApplication.getInstance().getUser();
+						RequestParams params = new RequestParams();
+						params.put("useraccount", user.getUsername());
+						params.put("username", user.getName() );
+						params.put("asset", mEtNeedAsset.getText().toString().trim());
+						params.put("date", MyApplication.getNowDateTime());
+						params.put("comment", mEtComment.getText().toString().trim());
+						CommentsRestClient.post(CommentsRestClient.ACTION_LEAVE_COMMENT, params, mCommentHandler);
+					}else{
+						showToast("请正确填写留言信息！！");
+					}
 				}else{
 					showToast("当前网络不可用！请检查！");
 				}
@@ -126,37 +153,59 @@ public class UserSearchAssetsFragment extends AbstractFragment{
 	public boolean onBackPressed() {
 		boolean isBack = mRlResult.getVisibility()==View.VISIBLE;
 		if(isBack){
-			mSearchMode = new SearchMode.SearchActionMode();
-			updateViewStatus();
+			navigationToSearchMode();
 		}
 		
 		return !isBack;
 	}
 	
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		mListResult = null;
+	}
+	
+private AsyncHttpResponseHandler mCommentHandler = new AsyncHttpResponseHandler() {
+		
+		@Override
+		public void onSuccess(int statusCode, Header[] arg1, byte[] result) {
+			if(new String(result).equalsIgnoreCase("done")){
+				showToast("留言成功，请耐心等待！");
+			}else{
+				showToast("留言失败，请重试！");
+			}
+		}
+		
+		@Override
+		public void onFailure(int statusCode, Header[] arg1, byte[] result, Throwable arg3) {
+			showToast("请求操作有误！");
+		}
+	};
+	
+	
 	private AsyncHttpResponseHandler mResultHandler = new AsyncHttpResponseHandler() {
 		
 		@Override
-		public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-			if(!MyApplication.isTextNoResultForJson(new String(arg2))&&getActivity()!=null){
+		public void onSuccess(int statusCode, Header[] arg1, byte[] result) {
+			if(!MyApplication.isTextNoResultForJson(new String(result))&&getActivity()!=null){
 				mListResult =null;
-				mListResult = Asset.decodeAssetsFromJsonToHashMap(new String(arg2),mSpCategory.getSelectedItem().toString());
-				mAdapter = new PersonalSearchAdapter(getActivity(), mListView, mListResult, null, mSpCategory.getSelectedItem().toString());
+				mListResult = Asset.decodeAssetsFromJsonToHashMap(new String(result),mSpCategory.getSelectedItem().toString());
+				mAdapter = new PersonalSearchAdapter(getActivity(), mListView, mListResult, mSpCategory.getSelectedItem().toString(),UserSearchAssetsFragment.this);
 				mListView.setAdapter(mAdapter);
 				mSearchMode = new SearchMode.SearchResultMode();
-				System.out.println("!null"+new String(arg2));
+				System.out.println("!null"+new String(result));
 			}else{
-				System.out.println("null"+new String(arg2));
+				System.out.println("null"+new String(result));
 				mSearchMode = new SearchMode.NoResultMode();
 			}
 			updateViewStatus();
 		}
 		
 		@Override
-		public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3) {
+		public void onFailure(int statusCode, Header[] arg1, byte[] result, Throwable arg3) {
 			showToast("请求操作有误！");
 		}
 	};
-	
 	
 	private static abstract class SearchMode{
 		protected abstract boolean isListViewVisible();
@@ -212,5 +261,11 @@ public class UserSearchAssetsFragment extends AbstractFragment{
 				return false;
 			}
 		}
+	}
+
+	@Override
+	public void navigationToSearchMode() {
+		mSearchMode = new SearchMode.SearchActionMode();
+		updateViewStatus();
 	}
 }

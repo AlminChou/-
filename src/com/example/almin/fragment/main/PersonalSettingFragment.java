@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -34,6 +35,8 @@ import com.example.almin.fragment.AbstractFragment;
 import com.example.almin.library.model.User;
 import com.example.almin.listener.UpdateLocalUserListener;
 import com.example.almin.utils.ImageTools;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class PersonalSettingFragment extends AbstractFragment implements UpdateLocalUserListener{
 	private final static String MY_SETTING_TAG = "个人设置";
@@ -45,6 +48,7 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 	private static final int SCALE = 5;//照片缩小比例
 	private String[] mDepartments;
 	private ViewGroup mRootView;
+//	private Bitmap mBitmap;
 	private RelativeLayout mRlAvatar,mRlUpdateMyInfo,mRlLogOut,mRlAdminAssets;
 	private ImageView mIvAvatar;
 	private TextView mTvName,mTvDepartment,mTvPosition,mTvUserType;
@@ -88,9 +92,8 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 		updateLocalUser();
 		
 		mIvAvatar = (ImageView) mRootView.findViewById(R.id.iv_my_avatar);
-//		SharedPreferences sharedPreferences = getActivity().getSharedPreferences("temp",Context.MODE_WORLD_WRITEABLE);
-//		mIvAvatar.setBackground(new BitmapDrawable("/"+getActivity().getSharedPreferences("temp",Context.MODE_WORLD_WRITEABLE).getString("tempName", "")));
-//		System.out.println(getActivity().getSharedPreferences("temp",Context.MODE_WORLD_WRITEABLE).getString("tempName", "")+"----------------");
+		displayAvatarFromCache();
+		
 		mIvAvatar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -125,7 +128,15 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 		return mRootView;
 	}
 	
-	
+	@SuppressWarnings("deprecation")
+	@SuppressLint("SdCardPath")
+	private void displayAvatarFromCache() {
+		ImageLoader.getInstance().displayImage("file:///mnt/"+(MyApplication.isHaveSDcard()?"/sdcard":"")+MyApplication.AVATAR_PATH, 
+				mIvAvatar, new DisplayImageOptions.Builder()
+		.cacheInMemory(true)
+		.cacheOnDisc(true).build());		
+	}
+
 	public void showPicturePicker(Context context){
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setTitle("图片来源");
@@ -134,6 +145,8 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 			//类型码
 			int REQUEST_CODE;
 			
+			@SuppressWarnings("deprecation")
+			@SuppressLint("WorldWriteableFiles")
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
@@ -187,6 +200,8 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 	    startActivityForResult(intent, requestCode);
 	}
 	
+	@SuppressLint("WorldWriteableFiles")
+	@SuppressWarnings({ "static-access", "deprecation" })
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -201,8 +216,9 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 					bitmap.recycle();
 					
 					//将处理过的图片显示在界面上，并保存到本地
-					mIvAvatar.setImageBitmap(newBitmap);
-					ImageTools.savePhotoToSDCard(newBitmap, Environment.getExternalStorageDirectory().getAbsolutePath(), String.valueOf(System.currentTimeMillis()));
+//					mIvAvatar.setImageBitmap(newBitmap);
+					updateAvatar(newBitmap);
+//					ImageTools.savePhotoToSDCard(newBitmap, Environment.getExternalStorageDirectory().getAbsolutePath(), String.valueOf(System.currentTimeMillis()));
 					break;
 
 				case CHOOSE_PICTURE:
@@ -218,8 +234,8 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 							//释放原始图片占用的内存，防止out of memory异常发生
 							photo.recycle();
 							
-							mIvAvatar.setImageBitmap(smallBitmap);
-
+//							mIvAvatar.setImageBitmap(smallBitmap);
+							updateAvatar(smallBitmap);
 						}
 					} catch (FileNotFoundException e) {
 					    e.printStackTrace();
@@ -255,7 +271,8 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 			                photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 			            }  
 					}
-					mIvAvatar.setImageBitmap(photo);
+//					mIvAvatar.setImageBitmap(photo);
+					updateAvatar(photo);
 					break;
 				default:
 					break;
@@ -285,22 +302,21 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 	
 	
 	
-//	//打算头像更新后，再把头像的bitmap拿出来保存文件 
-	
-//	public void updateAvatar(Bitmap photo){
-//		mIvAvatar.setImageBitmap(photo);
-//		int i=0;//是否检查到存在SD卡
-//		//判断SD卡是否插入
-//		String status = Environment.getExternalStorageState();
-//		if (status.equals(Environment.MEDIA_MOUNTED)) {
-//			i=1;
-//		} else {
-//			i=0;
-//		}
-//		
-//		
-//	}
-//	
+	//打算头像更新后，再把头像的bitmap拿出来保存文件 
+	@SuppressLint("SdCardPath")
+	public void updateAvatar(Bitmap photo){
+		String fileName = "myavatar.jpg";
+		String avatarPath="";
+		mIvAvatar.setImageBitmap(photo);
+		//判断SD卡是否插入
+		if(MyApplication.isHaveSDcard()) {
+			avatarPath = MyApplication.saveImage("/sdcard"+MyApplication.AVATAR_DIR_PATH,fileName,photo,null,75,true);
+		}else{
+			avatarPath = MyApplication.saveImage(MyApplication.AVATAR_DIR_PATH,fileName,photo,null,75,true);
+		}
+		photo=null;
+		System.out.println(avatarPath);
+	}
 
 //	public void saveMyBitmap(String bitName,Bitmap bitmap,Boolean sdcardExit) throws IOException {          
 //		String saveDirPath = (sdcardExit?"/sdcard/AssetsService/AvatarTemp/":"/AssetsService/AvatarTemp/");
@@ -330,5 +346,10 @@ public class PersonalSettingFragment extends AbstractFragment implements UpdateL
 //			e.printStackTrace();  
 //		}  
 //	}  
-
+	
+	@Override
+	public void onDestroyView() {
+//		mBitmap = null;
+		super.onDestroyView();
+	}
 }

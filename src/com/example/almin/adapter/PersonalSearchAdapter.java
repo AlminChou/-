@@ -19,8 +19,9 @@ import com.example.almin.MyApplication;
 import com.example.almin.R;
 import com.example.almin.dialog.MyAlertDialog;
 import com.example.almin.library.model.Asset;
-import com.example.almin.listener.SpinnerStateListener;
-import com.example.almin.webservice.AssetsRestClient;
+import com.example.almin.library.model.User;
+import com.example.almin.listener.UpdateSearchModeListener;
+import com.example.almin.webservice.AssetsProcessRestClient;
 import com.example.almin.widget.PinnedHeaderExpandableListView;
 import com.example.almin.widget.PinnedHeaderExpandableListView.HeaderAdapter;
 import com.example.almin.widget.SwipeView;
@@ -33,15 +34,14 @@ public class PersonalSearchAdapter extends BaseExpandableListAdapter implements 
 	private Context mContext;  
 	private PinnedHeaderExpandableListView mListView;  
 	private LayoutInflater mInflater;  
-	private SpinnerStateListener mSpinnerStateListener;
+	private UpdateSearchModeListener mUpdateSearchModeListener;
 
-
-	public PersonalSearchAdapter(Context context,PinnedHeaderExpandableListView listView,HashMap<Integer, List<Asset>> groupDatas,SpinnerStateListener spinnerStateListener,String category){  
+	public PersonalSearchAdapter(Context context,PinnedHeaderExpandableListView listView,HashMap<Integer, List<Asset>> groupDatas,String category,UpdateSearchModeListener updateSearchModeListener){  
 		mGroupDatas = groupDatas;
 		mContext = context;  
 		mListView = listView;  
-		mSpinnerStateListener = spinnerStateListener;
 		mCategory = category;
+		mUpdateSearchModeListener = updateSearchModeListener;
 		mInflater = LayoutInflater.from(mContext);  
 	}  
 
@@ -94,9 +94,15 @@ public class PersonalSearchAdapter extends BaseExpandableListAdapter implements 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if(MyApplication.getInstance().isNetworkAvailable()){
+							User user = MyApplication.getInstance().getUser();
 							RequestParams params = new RequestParams();
-							
-							AssetsRestClient.post("", params , mApplyHandler);
+							params.put("assetId", asset.getId());
+							params.put("name", user.getName());
+							params.put("state", "…Í«Î");
+							params.put("message", "");
+							params.put("processDate", MyApplication.getNowDateTime());
+							params.put("useraccount", user.getUsername());
+							AssetsProcessRestClient.post(AssetsProcessRestClient.ACTION_ADD_PROCESS_AND_UPDATE_ASSET_STATE, params , mApplyHandler);
 						}else{
 							Toast.makeText(mContext, "µ±«∞Õ¯¬Á≤ªø…”√£°£°", Toast.LENGTH_LONG).show();
 						}
@@ -201,14 +207,19 @@ public class PersonalSearchAdapter extends BaseExpandableListAdapter implements 
 	private AsyncHttpResponseHandler mApplyHandler = new AsyncHttpResponseHandler(){
 
 		@Override
-		public void onFailure(int arg0, Header[] arg1, byte[] arg2,
+		public void onFailure(int statusCode, Header[] arg1, byte[] result,
 				Throwable arg3) {
-			
+			Toast.makeText(mContext, "«Î«Û ß∞‹£¨≤Ÿ◊˜”–ŒÛ£°", Toast.LENGTH_LONG).show();
 		}
 
 		@Override
-		public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-			
+		public void onSuccess(int statusCode, Header[] arg1, byte[] result) {
+			if(new String(result).equalsIgnoreCase("done")){
+				mUpdateSearchModeListener.navigationToSearchMode();
+				Toast.makeText(mContext, "…Í«Î≥…π¶,«ÎƒÕ–ƒµ»¥˝…Û∫À£°", Toast.LENGTH_LONG).show();
+			}else{
+				Toast.makeText(mContext, "…Í«Î ß∞‹£¨«Î÷ÿ ‘£°", Toast.LENGTH_LONG).show();
+			}
 		}
 		
 	};

@@ -57,6 +57,7 @@ public final class ImageTools {
 	 * @param bitmap
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	public static Drawable bitmapToDrawable(Bitmap bitmap) {
 		return new BitmapDrawable(bitmap);
 	}
@@ -242,6 +243,7 @@ public final class ImageTools {
 	 * @param h
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	public static Drawable zoomDrawable(Drawable drawable, int w, int h) {
 		int width = drawable.getIntrinsicWidth();
 		int height = drawable.getIntrinsicHeight();

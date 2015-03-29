@@ -46,8 +46,10 @@
     
     <string name="hint_search_info">请输入搜索资产名称，空则搜大类</string>
     <string name="search">搜索</string>
+    <string name="comment">留言</string>
     <string name="no_result">没有找到对应结果!如有需要请留言给管理员.</string>
     <string name="needs_comment_hint">请留下你的意见和需求，我们回尽快处理。</string>
+    <string name="needs_asset_hint">请填写需求资源：</string>
     <string name="search_page_hint">请选择条件：</string>
     
     <string-array name="spinner_department">
