@@ -146,6 +146,38 @@ public class MyApplication extends Application {
 		}
 	}
 	
+	@SuppressLint("SdCardPath")
+	public static void initAppTempDir() {
+		String sDir;
+		//判断SD卡是否插入
+		String status = Environment.getExternalStorageState();
+		boolean isHaveSDcard=status.equals(Environment.MEDIA_MOUNTED);
+		if (isHaveSDcard) {
+			//然后根据是否插入状态指定目录
+			File parent = new File("/sdcard/AssetsService/"); //创建总文件夹
+			if (!parent.exists()) {
+				parent.mkdirs();
+				System.out.println("parent 文件夹创建完成"+isHaveSDcard);
+			}
+			sDir = "/sdcard/AssetsService/AvatarTemp/";
+		} else {
+			//然后根据是否插入状态指定目录
+			File parent = new File("/AssetsService/"); //创建总文件夹
+			if (!parent.exists()) {
+				parent.mkdirs();
+				System.out.println("parent 文件夹创建完成"+isHaveSDcard);
+			}
+			sDir = "/AssetsService/AvatarTemp/";
+		}
+		//然后是创建Avatar文件夹
+
+		File avatarDir = new File(sDir); 
+		if (!avatarDir.exists()) {
+			avatarDir.mkdirs();
+			System.out.println("avatar 文件夹创建完成");
+		}
+	}
+	
 	public static String saveImage(String directory, String filename,
 			Bitmap source, byte[] jpegData, int quality,boolean isUpdate) {
 		OutputStream outputStream = null;
@@ -214,6 +246,10 @@ public class MyApplication extends Application {
 	
 	public static boolean isTextNoResultForJson(String text) {
 		return "[]".equalsIgnoreCase(text);
+	}
+	
+	public static boolean isDoneCallBack(String text) {
+		return "done".equalsIgnoreCase(text);
 	}
 	
 	public int getDisplayWidth() {

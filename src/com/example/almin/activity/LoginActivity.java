@@ -1,98 +1,96 @@
 package com.example.almin.activity;
 
-import java.io.File;
-
 import org.apache.http.Header;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-import android.os.Environment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.almin.MyApplication;
 import com.example.almin.R;
+import com.example.almin.fragment.SignUpFragment;
 import com.example.almin.library.model.User;
 import com.example.almin.webservice.UsersRestClient;
-import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-public class LoginActivity extends Activity {
-	private Button btnLogin;
-	
+public class LoginActivity extends FragmentActivity{
+	private Button mBtnLogin,mBtnSignUp;
+	private EditText mEtEmail,mEtPassword;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		getWindow().setFormat(PixelFormat.TRANSLUCENT);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
-		initAppTempDir();
-		btnLogin = (Button) findViewById(R.id.btn_login);
-		btnLogin.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				RequestParams params = new RequestParams();
-				params.put("username", "461604533");
-				params.put("password", "123456");
-				UsersRestClient.post(UsersRestClient.ACTION_CHECK_USER, params, new AsyncHttpResponseHandler() {
-					
-					@Override
-					public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-						User user =new Gson().fromJson(new String(arg2),User.class);
-						System.out.println(user!=null);
-						if(user!=null){
-							Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-							MyApplication.getInstance().setUser(user);
-							startActivity(intent);
-							finish();
-						}
-						System.out.println(arg0);
-					}
-					
-					@Override
-					public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3) {
-						
-					}
-				});
-			}
-		});
-		
+		MyApplication.initAppTempDir();
+		initView();
 	}
 
-	@SuppressLint("SdCardPath")
-	private void initAppTempDir() {
-		String sDir;
-		//判断SD卡是否插入
-		String status = Environment.getExternalStorageState();
-		boolean isHaveSDcard=status.equals(Environment.MEDIA_MOUNTED);
-		if (isHaveSDcard) {
-			//然后根据是否插入状态指定目录
-			File parent = new File("/sdcard/AssetsService/"); //创建总文件夹
-			if (!parent.exists()) {
-				parent.mkdirs();
-				System.out.println("parent 文件夹创建完成"+isHaveSDcard);
+	private void initView(){
+		mEtEmail = (EditText) findViewById(R.id.et_email);
+		mEtPassword = (EditText) findViewById(R.id.et_password);
+		mBtnLogin = (Button) findViewById(R.id.btn_login);
+		mBtnSignUp = (Button) findViewById(R.id.btn_sign_up);
+		mBtnLogin.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(MyApplication.isValidEmail(mEtEmail.getText().toString().trim()) && !MyApplication.isTextEmptyOrNull(mEtPassword.getText().toString().trim())){
+					if(MyApplication.getInstance().isNetworkAvailable()){
+						RequestParams params = new RequestParams();
+						params.put("username", mEtEmail.getText().toString().trim());
+						params.put("password", mEtPassword.getText().toString().trim());
+						UsersRestClient.post(UsersRestClient.ACTION_CHECK_USER, params , mLoginHandler );
+					}else{
+						Toast.makeText(getApplicationContext(), "当前网络不可用，请检查！", Toast.LENGTH_LONG).show();
+					}
+				}else{
+					Toast.makeText(getApplicationContext(), "邮箱格式不正确！", Toast.LENGTH_LONG).show();
+				}
 			}
-			sDir = "/sdcard/AssetsService/AvatarTemp/";
-		} else {
-			//然后根据是否插入状态指定目录
-			File parent = new File("/AssetsService/"); //创建总文件夹
-			if (!parent.exists()) {
-				parent.mkdirs();
-				System.out.println("parent 文件夹创建完成"+isHaveSDcard);
+		});
+		mBtnSignUp.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				navigateToSignUpFragment();
 			}
-			sDir = "/AssetsService/AvatarTemp/";
+		});
+	}
+	
+	private AsyncHttpResponseHandler mLoginHandler = new AsyncHttpResponseHandler() {
+		
+		@Override
+		public void onSuccess(int statusCode, Header[] arg1, byte[] result) {
+				User user = User.getUserFromJson(result);
+				if(user!=null){
+					Toast.makeText(getApplicationContext(), "登录成功，请继续登录。", Toast.LENGTH_LONG).show();
+					Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+					MyApplication.getInstance().setUser(user);
+					startActivity(intent);
+					finish();
+				}else{
+					Toast.makeText(getApplicationContext(), "登录失败，用户信息不正确或者用户不存在存在，请重试！", Toast.LENGTH_LONG).show();
+				}
 		}
-		//然后是创建Avatar文件夹
-
-		File avatarDir = new File(sDir); 
-		if (!avatarDir.exists()) {
-			avatarDir.mkdirs();
-			System.out.println("avatar 文件夹创建完成");
+		
+		@Override
+		public void onFailure(int statusCode, Header[] arg1, byte[] result, Throwable arg3) {
+			Toast.makeText(getApplicationContext(), "登录失败，请重试！", Toast.LENGTH_LONG).show();
 		}
+	};
+	
+	private void navigateToSignUpFragment() {
+		addFragmentAndAdd2BackStack(new SignUpFragment());
+	}
+	
+	private void addFragmentAndAdd2BackStack(Fragment fragment) {
+		getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).addToBackStack(null).commit();
 	}
 }

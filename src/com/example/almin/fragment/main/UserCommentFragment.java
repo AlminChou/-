@@ -25,7 +25,6 @@ public class UserCommentFragment extends AbstractFragment {
 
 	@Override
 	public String getFragmentTag() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

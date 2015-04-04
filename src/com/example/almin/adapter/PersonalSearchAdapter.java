@@ -194,7 +194,7 @@ public class PersonalSearchAdapter extends BaseExpandableListAdapter implements 
 		return 0;   
 	}  
 
-	class ChildHolder{
+	private static class ChildHolder{
 		SwipeView swipeView;
 		TextView tvName;
 		TextView tvState;

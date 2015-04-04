@@ -17,7 +17,6 @@ public class MyFragmentManager {
 	}
 	
 	public static void init(FragmentManager fm, int containerId) {
-//		if (fragmentManager == null)
 		mMyFragmentManager = new MyFragmentManager(fm, containerId);
 	}
 	

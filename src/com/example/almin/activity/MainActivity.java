@@ -22,6 +22,7 @@ import com.example.almin.MyApplication;
 import com.example.almin.MyFragmentManager;
 import com.example.almin.R;
 import com.example.almin.fragment.AbstractFragment;
+import com.example.almin.fragment.SignUpFragment;
 import com.example.almin.fragment.UpdateMyInfoFragment;
 import com.example.almin.fragment.UserSearchAssetsFragment;
 import com.example.almin.fragment.main.MyRequestFragment;
