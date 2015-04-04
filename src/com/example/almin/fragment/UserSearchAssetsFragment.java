@@ -46,6 +46,11 @@ public class UserSearchAssetsFragment extends AbstractFragment implements Update
 	private PersonalSearchAdapter mAdapter;
 	
 	@Override
+	protected String getActionBarTitle() {
+		return "ËÑË÷×Ê²ú";
+	}
+	
+	@Override
 	public String getFragmentTag() {
 		return "UserSearchAssetsFragment";
 	}

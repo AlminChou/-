@@ -1,5 +1,7 @@
 package com.example.almin.library.model;
 
+import com.google.gson.Gson;
+
 public class User {
 	private String username;   //’À∫≈
 	private String password;   //√‹¬Î
@@ -71,5 +73,10 @@ public class User {
 
 	public void setPicUrl(String picUrl) {
 		this.picUrl = picUrl;
+	}
+	
+	public static User getUserFromJson(byte[] result){
+		User user =new Gson().fromJson(new String(result),User.class);
+		return user;
 	}
 }

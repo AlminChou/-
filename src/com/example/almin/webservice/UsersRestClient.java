@@ -10,6 +10,7 @@ public class UsersRestClient {
 	public static final String ACTION_CHECK_USER = "checkUser.do";
 	public static final String ACTION_UPDATE_USER_INFO = "updateMySettings.do";
 	public static final String ACTION_UPDATE_PASSWORD = "updatePassword.do";
+	public static final String ACTION_REGISTER = "register.do";
 
 	private static AsyncHttpClient client = new AsyncHttpClient();
 																
